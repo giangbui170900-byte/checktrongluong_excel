@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quản lý check trọng lượng J&T</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f4f6;--pn:#fff;--ink:#16181d;--mute:#5d6470;--line:#dcdfe5;--red:#d71920;--rs:#fde8e9;--ok:#16794a;--os:#e3f4ea;--wn:#9a5b00;--ws:#fff1d6;--code:#eef0f4;--side:#1c1f26;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161a;--pn:#1d2025;--ink:#eceef2;--mute:#9aa1ad;--line:#33373f;--rs:#3a1c1e;--os:#16301f;--ws:#35280f;--wn:#f0b45a;--code:#272b32;--red:#ff4a50;--ok:#4ac98a;--side:#0e1013}}
+:root[data-theme="dark"]{--bg:#14161a;--pn:#1d2025;--ink:#eceef2;--mute:#9aa1ad;--line:#33373f;--rs:#3a1c1e;--os:#16301f;--ws:#35280f;--wn:#f0b45a;--code:#272b32;--red:#ff4a50;--ok:#4ac98a;--side:#0e1013}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15.5px/1.65 "Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;display:grid;grid-template-columns:230px minmax(0,1fr);min-height:100vh}
+aside{background:var(--side);color:#d9dce3;padding:24px 12px;position:sticky;top:0;height:100vh;overflow:auto}
+aside h1{font-size:17px;line-height:1.3;margin:0 8px 4px;color:#fff;font-weight:800}
+aside h1 b{color:#ff5a60}
+aside p{font-size:13px;margin:0 8px 18px;opacity:.7}
+aside button{display:block;width:100%;text-align:left;font:500 14px inherit;font-family:inherit;color:inherit;background:none;border:0;border-left:3px solid transparent;padding:9px 12px;cursor:pointer;border-radius:0 8px 8px 0}
+aside button[aria-selected=true]{background:rgba(255,255,255,.1);border-left-color:#ff5a60;color:#fff}
+aside button:focus-visible{outline:2px solid #ff5a60}
+main{padding:28px 40px 64px;width:100%}
+section{display:none}section.on{display:block}
+h2{font-size:clamp(24px,3.5vw,34px);line-height:1.2;margin:0 0 6px;font-weight:800;letter-spacing:-.02em}
+h3{font-size:16.5px;margin:0 0 6px}
+.lead{color:var(--mute);margin:0 0 16px;max-width:90ch}
+.box{background:var(--pn);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.box.warn{border-left:4px solid var(--wn);background:var(--ws)}
+.mute{color:var(--mute)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px;margin:14px 0}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:14px;margin:14px 0}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--pn)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--code)}
+td.w{white-space:normal}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+.tg{border-radius:6px;padding:2px 8px;font-weight:700;font-size:13px}
+.r{background:var(--rs);color:var(--red)}.g{background:var(--os);color:var(--ok)}.y{background:var(--ws);color:var(--wn)}
+code,pre{font-family:ui-monospace,Consolas,monospace;background:var(--code);border-radius:6px;font-size:13.5px}
+code{padding:2px 6px}
+pre{padding:10px 12px;overflow-x:auto;margin:6px 0;white-space:pre-wrap;word-break:break-word}
+.ctl{display:flex;gap:14px;align-items:end;flex-wrap:wrap;margin:12px 0}
+.ctl label{display:flex;flex-direction:column;font-size:13px;color:var(--mute);gap:4px}
+select,input[type=number],input[type=search]{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--pn);color:var(--ink)}
+.btn{font:500 14px inherit;font-family:inherit;background:var(--red);color:#fff;border:0;padding:9px 16px;border-radius:8px;cursor:pointer}
+.btn:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.chip{font:500 13px inherit;font-family:inherit;border:1px solid var(--line);background:var(--pn);color:var(--ink);padding:6px 12px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+ol.s,ul.s{padding-left:22px;margin:6px 0}ol.s li,ul.s li{margin:5px 0}
+.fn{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,430px),1fr));gap:14px;margin-top:14px}
+.fn .box h3{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.fn small{font-size:12px;color:var(--mute);font-weight:500}
+.fn dt{font-weight:700;font-size:13px;margin-top:8px}.fn dd{margin:2px 0 0}
+.chk{display:flex;gap:10px;align-items:flex-start;margin:8px 0}.chk input{margin-top:6px;accent-color:var(--red);width:18px;height:18px}
+progress{width:100%;height:10px;accent-color:var(--red)}
+@media(max-width:760px){body{grid-template-columns:1fr}aside{position:sticky;height:auto;z-index:5;display:flex;gap:4px;overflow-x:auto;padding:10px}aside h1,aside p{display:none}aside button{width:auto;flex:none;white-space:nowrap;border-left:0;border-bottom:3px solid transparent;border-radius:8px 8px 0 0}aside button[aria-selected=true]{border-bottom-color:#ff5a60}main{padding:20px 16px 56px}}
+</style>
+</head>
+<body>
+<aside id="side"><h1>Check trọng lượng <b>J&amp;T</b></h1><p>Cẩm nang file, hàm, báo cáo</p></aside>
+<main>
+
+<section id="t0">
+<h2>Tổng quan file CHECK TRỌNG LƯỢNG</h2>
+<p class="lead">Mình đọc từ ảnh file Feishu của bạn. Chỗ nào hiểu sai nghĩa cột, bạn sửa lại giúp mình.</p>
+<div class="cols">
+<div class="scroll"><table><tr><th>Cột</th><th>Tên</th><th>Mình hiểu là</th></tr>
+<tr><td>A</td><td>CS</td><td class="w">Nhân viên CS phụ trách đơn (dropdown)</td></tr>
+<tr><td>B</td><td>MVD</td><td class="w">Mã vận đơn 12 số, để định dạng Text</td></tr>
+<tr><td>C</td><td>Trạng thái xử lý</td><td class="w">Dropdown theo dõi tiến độ</td></tr>
+<tr><td>D</td><td>Dấu ký nhận</td><td class="w">Signed hoặc Unsigned</td></tr>
+<tr><td>E</td><td>Cân hay Đo?</td><td class="w">Tính cước theo cân nặng hay kích thước</td></tr>
+<tr><td>F</td><td>Tiền cước chênh lệch</td><td class="w">Tiền chênh sau khi cân/đo lại (VND)</td></tr>
+<tr><td>G</td><td>Đơn đã ký, bằng chứng đúng, thất bại, lý do đối soát</td><td class="w">Ghi kết quả cho đơn đã ký</td></tr>
+<tr><td>H</td><td>Đơn chưa ký duyệt bình thường</td><td class="w">Ghi kết quả cho đơn chưa ký</td></tr></table></div>
+<div class="box"><h3>Quy trình xử lý một đơn (theo tiêu đề cột G, H)</h3><ol class="s">
+<li>Nhận danh sách đơn chênh cước, dán MVD vào cột B, gán CS ở cột A.</li>
+<li>Kiểm tra <b>Dấu ký nhận</b> ở cột D.</li>
+<li><b>Đã ký:</b> kiểm bằng chứng cân/đo. Đúng thì đối soát cước. Sai hoặc khách phản đối thì ghi thất bại và lý do vào cột G.</li>
+<li><b>Chưa ký:</b> duyệt bình thường, ghi vào cột H.</li>
+<li>Cập nhật cột C ngay sau mỗi bước.</li>
+<li>Đơn quá hạn chuyển sang tab "Đơn quá hạn", tổng hợp ở tab "Gửi mail KT".</li></ol></div></div>
+<div class="cols">
+<div class="box"><h3>Cột nên thêm</h3><p class="mute">I Ngày nhận đơn, J Số ngày tồn, K Quá hạn, L Nhóm cước, M Trùng MVD. Công thức có sẵn ở mục "Công thức áp vào file".</p></div>
+<div class="box"><h3>Dropdown cột C gợi ý</h3><p class="mute">Chưa xử lý, Đang xử lý, Đã đối soát, Thất bại. Giữ đúng một kiểu chính tả vì công thức đếm so sánh theo chữ.</p></div>
+<div class="box warn"><b>Feishu Sheets:</b> hàm cơ bản giống Excel. Hàm mới (XLOOKUP, FILTER, UNIQUE) hãy chạy thử trên một ô trước. Nếu lỗi, dùng INDEX+MATCH.</div></div>
+</section>
+
+<section id="t1">
+<h2>Thư viện hàm Excel dùng cho công việc</h2>
+<p class="lead">Mỗi hàm có cú pháp, logic chạy, ví dụ theo cột của bạn và lỗi hay gặp. Quy ước: A=CS, B=MVD, C=Trạng thái, D=Dấu ký nhận, E=Cân/Đo, F=Cước chênh, I=Ngày nhận, J=Số ngày tồn, K=Quá hạn.</p>
+<div class="box warn"><h3>Quy tắc logic cần nhớ</h3><ul class="s">
+<li><b>Dấu phân cách:</b> máy cài vùng Việt Nam có thể dùng dấu chấm phẩy <code>;</code> thay cho dấu phẩy <code>,</code>. Nếu công thức báo lỗi cú pháp, đổi dấu.</li>
+<li><b>Chữ trong nháy kép</b> <code>"Quá hạn"</code>, số không để nháy. Điều kiện so sánh trong COUNTIFS/SUMIFS cũng phải trong nháy: <code>"&gt;3000"</code>. Ghép với ô: <code>"&gt;"&amp;H1</code>.</li>
+<li><b>Khóa ô bằng $:</b> <code>$B$2</code> cố định cả cột và hàng (phím F4). <code>$B$2:B2</code> là vùng giãn dần khi kéo xuống, dùng để phát hiện trùng.</li>
+<li><b>AND và OR:</b> COUNTIFS nhiều điều kiện là logic AND (tất cả đúng). Muốn OR thì cộng hai COUNTIFS.</li>
+<li><b>Số và chữ khác nhau:</b> MVD dạng chữ không khớp với MVD dạng số, tra cứu sẽ ra #N/A. Căn trái thường là chữ, căn phải là số.</li>
+<li><b>Thứ tự đối số:</b> SUMIFS đặt vùng cần cộng đứng đầu, còn SUMIF đặt cuối.</li></ul></div>
+<div class="ctl"><label>Tìm hàm<input type="search" id="q" placeholder="Ví dụ: đếm, tra cứu, ngày"></label><div id="cats" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>
+<div class="fn" id="fn"></div>
+</section>
+
+<section id="t2">
+<h2>Công thức áp vào file</h2>
+<p class="lead">Dán vào hàng 2 rồi kéo xuống. Nếu máy bạn dùng dấu chấm phẩy, thay mọi dấu phẩy ngăn đối số bằng dấu chấm phẩy.</p>
+<div class="fn" id="fm"></div>
+</section>
+
+<section id="t3">
+<h2>Database mẫu</h2>
+<p class="lead">Dữ liệu giả theo đúng cấu trúc file của bạn cộng 3 cột công thức. Hôm nay được giả lập là 05/10/2026. Đổi bộ lọc và hạn xử lý để xem kết quả.</p>
+<div class="ctl">
+<label>Nguồn<select id="fs"><option value="">Tất cả</option><option>TikTok</option><option>Khách lẻ</option></select></label>
+<label>Trạng thái<select id="ft"><option value="">Tất cả</option><option>Chưa xử lý</option><option>Đang xử lý</option><option>Đã đối soát</option><option>Thất bại</option></select></label>
+<label>Hạn xử lý (ngày)<input id="lim" type="number" min="1" max="30" value="3"></label>
+<button class="btn" id="cp">Sao chép dữ liệu</button><span id="cpm" class="mute"></span></div>
+<div class="g3" id="kp"></div>
+<div class="scroll"><table id="db"></table></div>
+<h3 style="margin-top:20px">Hiệu suất theo CS (theo bộ lọc đang chọn)</h3>
+<div class="scroll"><table id="pv"></table></div>
+</section>
+
+<section id="t4">
+<h2>Hiệu suất và báo cáo: làm trên Excel từng bước</h2>
+<p class="lead">Làm lần lượt Bước 1 đến 8, khoảng 60 đến 90 phút cho lần đầu. Sau đó mỗi ngày chỉ cần dán dữ liệu mới và bấm Refresh. Giả sử file có tab <b>Data</b> (cột A đến M như tab Công thức), 3 CS là CS An, CS Bình, CS Chi. Tên tab và tên CS của bạn khác thì sửa lại cho khớp. Feishu có thao tác tương tự, riêng Pivot và Slicer khác tên menu.</p>
+<div class="box warn"><b>Nếu Excel báo lỗi cú pháp:</b> máy dùng vùng Việt Nam thường cần dấu chấm phẩy <code>;</code> thay cho dấu phẩy <code>,</code> giữa các đối số.</div>
+
+<div class="box" style="margin-top:14px"><h3>Bước 1. Biến Data thành Table</h3><ol class="s">
+<li>Bấm vào một ô bất kỳ trong dữ liệu, nhấn <b>Ctrl+T</b>, tick "My table has headers", OK.</li>
+<li>Tab Table Design, ô Table Name đổi thành <code>Don</code>.</li>
+<li>Lợi ích: dòng mới dán vào tự có công thức cột I đến M, Pivot và biểu đồ tự mở rộng.</li>
+<li>Kiểm tra: cột C chỉ có 4 giá trị đúng chính tả, cột F là số (căn phải), cột I là ngày.</li></ol></div>
+
+<div class="box" style="margin-top:14px"><h3>Bước 2. Tạo tab Cài_đặt</h3>
+<div class="scroll"><table><tr><th>Ô</th><th>Nội dung</th><th>Giá trị</th></tr>
+<tr><td>A1 / B1</td><td>Hạn xử lý (ngày)</td><td>3</td></tr>
+<tr><td>A2 / B2</td><td>Ngưỡng cước Cao</td><td>3000</td></tr>
+<tr><td>A3 / B3</td><td>Ngưỡng cước Trung bình</td><td>1000</td></tr>
+<tr><td>A4 / B4</td><td>Email kế toán</td><td>địa chỉ mail</td></tr>
+<tr><td>A5 / B5</td><td>Mục tiêu tỷ lệ xong</td><td>0,6 (định dạng %)</td></tr></table></div>
+<p class="mute">Cột K trong Data dùng <code>Cài_đặt!$B$1</code>, cột L dùng B2 và B3 (công thức ở tab Công thức áp vào file).</p></div>
+
+<div class="box" style="margin-top:14px"><h3>Bước 3. Tạo tab Hiệu suất</h3>
+<p>Tạo sheet mới tên <b>Hiệu suất</b>. Hàng 1 là tiêu đề, A2 đến A4 là tên 3 CS, hàng 5 là tổng.</p>
+<div class="scroll"><table><tr><th>Ô</th><th>Tiêu đề (hàng 1)</th><th>Công thức hàng 2, kéo xuống hàng 4</th></tr>
+<tr><td>B</td><td>Tổng đơn</td><td class="w"><pre class="vba">=COUNTIFS(Data!$A:$A,$A2)</pre></td></tr>
+<tr><td>C</td><td>Đã xong</td><td class="w"><pre class="vba">=COUNTIFS(Data!$A:$A,$A2,Data!$C:$C,"Đã đối soát")+COUNTIFS(Data!$A:$A,$A2,Data!$C:$C,"Thất bại")</pre></td></tr>
+<tr><td>D</td><td>Tỷ lệ xong</td><td class="w"><pre class="vba">=IFERROR(C2/B2,0)</pre>Định dạng ô là Percentage.</td></tr>
+<tr><td>E</td><td>Thất bại</td><td class="w"><pre class="vba">=COUNTIFS(Data!$A:$A,$A2,Data!$C:$C,"Thất bại")</pre></td></tr>
+<tr><td>F</td><td>Quá hạn</td><td class="w"><pre class="vba">=COUNTIFS(Data!$A:$A,$A2,Data!$K:$K,"Quá hạn")</pre></td></tr>
+<tr><td>G</td><td>Cước tồn</td><td class="w"><pre class="vba">=SUMIFS(Data!$F:$F,Data!$A:$A,$A2,Data!$C:$C,"&lt;&gt;Đã đối soát",Data!$C:$C,"&lt;&gt;Thất bại")</pre></td></tr>
+<tr><td>H</td><td>Tuổi tồn TB</td><td class="w"><pre class="vba">=IFERROR(AVERAGEIFS(Data!$J:$J,Data!$A:$A,$A2),0)</pre>Cột J trống với đơn đóng nên tự bị bỏ qua.</td></tr>
+<tr><td>I</td><td>Đạt mục tiêu</td><td class="w"><pre class="vba">=IF(D2&gt;=Cài_đặt!$B$5,"Đạt","Chưa đạt")</pre></td></tr>
+<tr><td>J</td><td>Mục tiêu</td><td class="w"><pre class="vba">=Cài_đặt!$B$5</pre>Dùng để vẽ vạch mục tiêu trên biểu đồ.</td></tr></table></div>
+<p><b>Hàng 5 (Toàn nhóm):</b> B5, C5, E5, F5, G5 dùng <code>=SUM(B2:B4)</code> (đổi chữ cột tương ứng). D5 là <code>=IFERROR(C5/B5,0)</code>, <b>không</b> cộng các tỷ lệ. H5 là <code>=IFERROR(AVERAGE(Data!$J:$J),0)</code>.</p>
+<p><b>Bảng tuổi tồn (đặt ở A8 đến B10):</b></p>
+<pre class="vba">B8  =COUNTIFS(Data!$J:$J,"&gt;=0",Data!$J:$J,"&lt;=3")   (0 đến 3 ngày)
+B9  =COUNTIFS(Data!$J:$J,"&gt;=4",Data!$J:$J,"&lt;=7")   (4 đến 7 ngày)
+B10 =COUNTIFS(Data!$J:$J,"&gt;7")                     (trên 7 ngày)</pre>
+<p class="mute">Kiểm tra: B5 phải bằng số dòng dữ liệu, và F5 phải bằng số dòng có K = Quá hạn khi lọc tay ở tab Data. Nếu lệch, kiểm tra chính tả cột A và C.</p></div>
+
+<div class="box" style="margin-top:14px"><h3>Bước 4. Tab Báo cáo: 3 con số và câu nhận xét tự động</h3>
+<p>Tạo sheet <b>Báo cáo</b> (đây là trang sếp nhìn). Đặt 3 ô to:</p>
+<pre class="vba">B2  =Hiệu suất!D5     Tỷ lệ xong (định dạng %)
+B3  =Hiệu suất!F5     Đơn quá hạn
+B4  =Hiệu suất!G5     Cước chênh tồn (định dạng #,##0)</pre>
+<p>Câu nhận xét tự cập nhật, mỗi câu một ô:</p>
+<pre class="vba">A7  ="Tỷ lệ xong "&amp;TEXT(B2,"0%")&amp;IF(B2&gt;=Cài_đặt!B5," (đạt"," (chưa đạt")&amp;" mục tiêu "&amp;TEXT(Cài_đặt!B5,"0%")&amp;")."
+A8  ="Có "&amp;B3&amp;" đơn quá hạn, nhiều nhất là "&amp;INDEX(Hiệu suất!A2:A4,MATCH(MAX(Hiệu suất!F2:F4),Hiệu suất!F2:F4,0))&amp;" ("&amp;MAX(Hiệu suất!F2:F4)&amp;" đơn)."
+A9  ="CS tỷ lệ xong cao nhất: "&amp;INDEX(Hiệu suất!A2:A4,MATCH(MAX(Hiệu suất!D2:D4),Hiệu suất!D2:D4,0))&amp;" ("&amp;TEXT(MAX(Hiệu suất!D2:D4),"0%")&amp;")."
+A10 ="Đơn tồn lâu nhất: "&amp;INDEX(Data!B:B,MATCH(MAX(Data!J:J),Data!J:J,0))&amp;" ("&amp;MAX(Data!J:J)&amp;" ngày)."</pre>
+<p class="mute">Hai CS bằng số quá hạn thì công thức chỉ nêu CS đứng trên. Hãy đọc lại câu trước khi gửi.</p></div>
+
+<div class="box" style="margin-top:14px"><h3>Bước 5. PivotTable theo CS và trạng thái</h3><ol class="s">
+<li>Bấm vào bảng Data, vào <b>Insert, PivotTable, New Worksheet</b>, OK. Đặt tên tab <b>Pivot</b>.</li>
+<li>Kéo <b>CS</b> vào Rows, <b>Trạng thái xử lý</b> vào Columns.</li>
+<li>Kéo <b>MVD</b> vào Values, chọn Value Field Settings, <b>Count</b>.</li>
+<li>Kéo <b>Tiền cước chênh lệch</b> vào Values, chọn <b>Sum</b>.</li>
+<li>Chuột phải vào số đếm, <b>Show Values As, % of Row Total</b> để xem tỷ trọng từng trạng thái của mỗi CS.</li>
+<li>Kéo <b>Quá hạn</b> vào Filters để lọc nhanh đơn quá hạn.</li>
+<li>Bấm vào Pivot, tab PivotTable Analyze, <b>Insert Slicer</b>, tick Quá hạn và Dấu ký nhận. Bấm nút lọc như bấm công tắc.</li>
+<li><b>Pivot không tự cập nhật.</b> Mỗi lần có dữ liệu mới bấm <b>Data, Refresh All</b>.</li></ol></div>
+
+<div class="box" style="margin-top:14px"><h3>Bước 6. Biểu đồ tỷ lệ xong theo CS có vạch mục tiêu</h3><ol class="s">
+<li>Ở tab Hiệu suất, bôi A1 đến A4, giữ Ctrl rồi bôi tiếp D1 đến D4 và J1 đến J4.</li>
+<li><b>Insert, Recommended Charts, Clustered Column</b>.</li>
+<li>Chuột phải vào cột "Mục tiêu", <b>Change Series Chart Type</b>, chọn <b>Line</b>.</li>
+<li>Bôi trục dọc, Format Axis, đặt Minimum 0 và Maximum 1.</li>
+<li>Thêm Data Labels cho cột Tỷ lệ xong. Đặt tên biểu đồ ngắn gọn, ví dụ "Tỷ lệ xong theo CS".</li>
+<li>Cắt biểu đồ (Ctrl+X) dán sang tab Báo cáo.</li></ol>
+<p class="mute">Làm tương tự một biểu đồ cột cho bảng tuổi tồn A8:B10.</p></div>
+
+<div class="box" style="margin-top:14px"><h3>Bước 7. Tab Lịch_sử để thấy xu hướng</h3><ol class="s">
+<li>Tạo sheet <b>Lịch_sử</b>, hàng 1: Ngày, Tổng đơn, Đã xong, Quá hạn, Cước tồn.</li>
+<li>Công thức không lưu được số cũ, nên cuối mỗi ngày phải chụp lại. Dán macro sau vào Module rồi gán cho một nút (Alt+F11, Insert, Module, lưu file .xlsm):</li></ol>
+<pre class="vba">Sub ChupSo()
+    Dim h As Worksheet, p As Worksheet, n As Long
+    Set h = Sheets("Lịch_sử"): Set p = Sheets("Hiệu suất")
+    n = h.Cells(h.Rows.Count, "A").End(xlUp).Row + 1
+    If n &gt; 2 Then If h.Cells(n - 1, 1).Value = Date Then n = n - 1
+    h.Cells(n, 1).Value = Date
+    h.Cells(n, 2).Value = p.Range("B5").Value
+    h.Cells(n, 3).Value = p.Range("C5").Value
+    h.Cells(n, 4).Value = p.Range("F5").Value
+    h.Cells(n, 5).Value = p.Range("G5").Value
+    MsgBox "Đã chụp số liệu ngày " &amp; Format(Date, "dd/mm/yyyy")
+End Sub</pre>
+<ol class="s" start="3"><li>Cột F: <code>=D3-D2</code> cho Quá hạn. Số âm nghĩa là đang tốt lên. Làm tương tự cho Cước tồn.</li>
+<li>Vẽ biểu đồ đường từ cột Ngày và Quá hạn, đặt sang tab Báo cáo. Cần ít nhất 5 đến 7 ngày dữ liệu thì xu hướng mới có ý nghĩa.</li></ol></div>
+
+<div class="box" style="margin-top:14px"><h3>Bước 8. Trình bày và gửi sếp</h3><ol class="s">
+<li>Tab Báo cáo sắp xếp từ trên xuống: 3 con số, 3 đến 4 câu nhận xét, biểu đồ tỷ lệ xong, biểu đồ tuổi tồn, bảng CS (copy từ Hiệu suất A1:I5).</li>
+<li>Ô cần hành động ghi tay ở cuối: việc gì, ai làm, hạn khi nào.</li>
+<li>Vào <b>Page Layout, Print Area, Set Print Area</b>, rồi <b>Fit Sheet on One Page</b>.</li>
+<li>Xuất file: <b>File, Export, Create PDF/XPS</b>, hoặc gửi bằng link mail ở tab Tự động hóa.</li>
+<li>Kiểm tra lần cuối: tổng đơn khớp với số dòng Data, không có ô lỗi #N/A hay #DIV/0!, ngày báo cáo đúng.</li></ol></div>
+
+<div class="box warn" style="margin-top:14px"><h3>Khi họp khu vực</h3><ul class="s"><li>Mở bằng 3 con số, nói trong 30 giây.</li><li>Nêu một điểm tốt có số trước (CS có tỷ lệ xong cao nhất), sau đó mới nêu điểm cần cải thiện.</li><li>Mỗi vấn đề đi kèm hành động cụ thể và hạn. Chỉ báo cáo số bạn kiểm chứng được.</li></ul></div>
+
+<details style="margin-top:16px"><summary style="cursor:pointer;font-weight:700">Xem kết quả mẫu để đối chiếu (dữ liệu giả, hôm nay 05/10/2026)</summary>
+<div class="ctl"><label>Hạn xử lý (ngày)<input id="rl" type="number" min="1" max="30" value="3"></label><label>Mục tiêu tỷ lệ xong (%)<input id="rt" type="number" min="1" max="100" value="60"></label><button class="btn" id="rc">Sao chép bản tóm tắt</button><span id="rm" class="mute"></span></div>
+<div class="g3" id="rk"></div>
+<div class="scroll"><table id="rcs"></table></div><div id="rbar" style="margin:12px 0"></div>
+<div class="cols"><div class="scroll"><table id="rsr"></table></div><div class="scroll"><table id="rag"></table></div></div>
+<div class="box" id="rin" style="margin-top:12px"></div></details>
+</section>
+
+<section id="t5">
+<h2>Lộ trình học Excel</h2>
+<p class="lead">Tick từng mục khi làm xong. Tiến độ được nhớ trên trình duyệt này.</p>
+<progress id="pg" value="0" max="1"></progress><p id="pgt" class="mute"></p>
+<div id="ck" class="cols"></div>
+</section>
+
+<section id="t6">
+<h2>Tự động hóa</h2>
+<p class="lead">Chia 3 mức, làm từ dễ đến khó. Mức 1 không cần code và chạy được ngay trên Feishu. Mức 2 và 3 dùng Excel trên máy tính. Quy ước cột như các tab trước: A=CS, B=MVD, C=Trạng thái, D=Ký nhận, E=Cân/Đo, F=Cước chênh, I=Ngày nhận, J=Số ngày tồn, K=Quá hạn, L=Nhóm cước, M=Trùng.</p>
+<div class="scroll"><table><tr><th>Mức</th><th>Làm gì</th><th>Cần</th><th>Tiết kiệm</th></tr>
+<tr><td>1</td><td class="w">Dropdown, chặn nhập sai, tô màu tự động, Filter view, công thức</td><td class="w">Feishu hoặc Excel</td><td class="w">Hết lỗi gõ sai, nhìn là biết đơn nào cần xử lý</td></tr>
+<tr><td>2</td><td class="w">Macro: tự điền ngày nhận, tự lọc đơn quá hạn, tự dọn MVD</td><td class="w">Excel máy tính (.xlsm)</td><td class="w">Bỏ các thao tác lặp mỗi ngày</td></tr>
+<tr><td>3</td><td class="w">Power Query: gộp file ngày, làm sạch, tính tồn, bấm Refresh</td><td class="w">Excel máy tính</td><td class="w">Bỏ việc copy dán nhiều file</td></tr></table></div>
+
+<h3 style="margin-top:22px">Mức 1A. Dropdown và chặn nhập sai (Data Validation)</h3>
+<div class="scroll"><table><tr><th>Cột</th><th>Kiểu</th><th>Cài đặt</th></tr>
+<tr><td>A</td><td>Dropdown</td><td class="w">Danh sách tên CS: <code>CS An,CS Bình,CS Chi</code>. Nhiều tên thì để danh sách ở tab riêng rồi chọn vùng.</td></tr>
+<tr><td>B</td><td>Công thức tùy chỉnh</td><td class="w"><code>=AND(LEN(B2)=12,COUNTIF($B:$B,B2)=1)</code> chỉ nhận MVD đủ 12 ký tự và chưa có trong cột.</td></tr>
+<tr><td>C</td><td>Dropdown</td><td class="w"><code>Chưa xử lý,Đang xử lý,Đã đối soát,Thất bại</code>. Gán màu từng mục nếu Feishu cho phép.</td></tr>
+<tr><td>D</td><td>Dropdown</td><td><code>Signed,Unsigned</code></td></tr>
+<tr><td>E</td><td>Dropdown</td><td><code>Cân,Đo</code></td></tr>
+<tr><td>F</td><td>Số</td><td class="w">Số thập phân lớn hơn hoặc bằng 0, báo lỗi khi nhập chữ.</td></tr></table></div>
+<div class="box warn" style="margin-top:12px"><b>Giới hạn cần biết:</b> khi dán nhiều ô cùng lúc, Data Validation thường không chặn được. Vì vậy cột M (Trùng) và công thức TRIM vẫn cần giữ để kiểm tra lại sau khi dán.</div>
+
+<h3 style="margin-top:22px">Mức 1B. Tô màu tự động (Conditional Formatting)</h3>
+<p class="mute">Chọn vùng <code>A2:M500</code>, thêm quy tắc kiểu công thức tùy chỉnh. Dấu <code>$</code> trước chữ cái khóa cột, nên cả dòng đổi màu theo một ô. Quy tắc nằm trên được ưu tiên.</p>
+<div class="scroll"><table><tr><th>Thứ tự</th><th>Công thức</th><th>Định dạng</th><th>Ý nghĩa</th></tr>
+<tr><td>1</td><td><code>=OR($C2="Đã đối soát",$C2="Thất bại")</code></td><td>Chữ xám</td><td class="w">Đơn đã đóng, mờ đi để khỏi nhìn nhầm</td></tr>
+<tr><td>2</td><td><code>=AND($D2="Unsigned",$J2&gt;3)</code></td><td>Nền đỏ đậm</td><td class="w">Chưa ký và tồn quá 3 ngày, xử lý gấp nhất</td></tr>
+<tr><td>3</td><td><code>=$K2="Quá hạn"</code></td><td>Nền đỏ nhạt</td><td class="w">Quá hạn</td></tr>
+<tr><td>4</td><td><code>=$M2="Trùng"</code></td><td>Nền vàng</td><td class="w">MVD bị nhập lặp</td></tr>
+<tr><td>5</td><td><code>=$L2="Cao"</code></td><td>Chữ đậm cam (chỉ cột F)</td><td class="w">Cước chênh cao</td></tr></table></div>
+<p class="mute">Nếu hạn không phải 3 ngày, đổi số trong công thức hoặc trỏ tới một ô cài đặt, ví dụ <code>$J2&gt;Cài_đặt!$B$1</code>.</p>
+
+<h3 style="margin-top:22px">Mức 1C. Ô cài đặt dùng chung</h3>
+<ol class="s"><li>Tạo tab <b>Cài_đặt</b>: B1 = hạn xử lý (3), B2 = ngưỡng cước Cao (3000), B3 = ngưỡng Trung bình (1000), B4 = email kế toán.</li>
+<li>Sửa công thức cột K: <code>=IF(J2="","",IF(J2&gt;Cài_đặt!$B$1,"Quá hạn","Trong hạn"))</code></li>
+<li>Sửa cột L: <code>=IFS(F2&gt;=Cài_đặt!$B$2,"Cao",F2&gt;=Cài_đặt!$B$3,"Trung bình",TRUE,"Thấp")</code></li>
+<li>Từ giờ đổi hạn ở một chỗ, mọi cột, màu và báo cáo đổi theo.</li></ol>
+
+<h3 style="margin-top:22px">Mức 1D. Bảng tự mở rộng và Filter view</h3>
+<ul class="s"><li><b>Công thức tràn tự động:</b> trong Excel 365 hoặc Feishu bản mới, đặt công thức cột J-M bằng cách bôi cả vùng J2:M500 rồi dán, hoặc dùng <b>Format as Table</b> để dòng mới tự có công thức.</li>
+<li><b>Filter view riêng từng người:</b> mỗi CS tạo một view tên mình (A = tên CS), một view <i>Quá hạn</i> (K = Quá hạn), một view <i>Chưa ký</i> (D = Unsigned, C khác Đã đối soát và Thất bại). Mở view là xong, không ảnh hưởng người khác.</li>
+<li><b>Khóa vùng công thức:</b> bảo vệ cột I-M để không ai ghi đè công thức, chỉ chừa A-H cho nhập.</li>
+<li><b>Nhắc việc:</b> nếu Feishu của bạn có tính năng nhắc hoặc @ người trong ô, dùng cho đơn quá hạn lâu ngày. Tên menu có thể khác theo phiên bản.</li></ul>
+
+<h3 style="margin-top:22px">Mức 2. Macro VBA (Excel máy tính)</h3>
+<p class="mute">Lưu file dạng <b>.xlsm</b>. Mở Developer (hoặc Alt+F11), dán đoạn 1 vào cửa sổ của sheet <b>Data</b>, đoạn 2 và 3 vào Insert, Module. Sheet cần có tên đúng là <code>Data</code> và <code>Đơn quá hạn</code>. Hãy lưu bản sao trước khi chạy thử.</p>
+<div class="cols">
+<div class="box"><h3>1. Tự điền ngày nhận và trạng thái</h3><p class="mute">Khi dán MVD vào cột B, cột I tự ghi ngày hôm nay, cột C tự ghi "Chưa xử lý" (chỉ khi đang trống).</p>
+<pre class="vba">Private Sub Worksheet_Change(ByVal Target As Range)
+    Dim rng As Range, c As Range
+    Set rng = Intersect(Target, Me.Range("B2:B1000"))
+    If rng Is Nothing Then Exit Sub
+    On Error GoTo Thoat
+    Application.EnableEvents = False
+    For Each c In rng.Cells
+        If Trim(c.Value) &lt;&gt; "" Then
+            c.Value = Trim(c.Value)
+            If Me.Cells(c.Row, "I").Value = "" Then Me.Cells(c.Row, "I").Value = Date
+            If Me.Cells(c.Row, "C").Value = "" Then Me.Cells(c.Row, "C").Value = "Chưa xử lý"
+        End If
+    Next c
+Thoat:
+    Application.EnableEvents = True
+End Sub</pre></div>
+<div class="box"><h3>2. Lọc đơn quá hạn sang tab riêng</h3><p class="mute">Xóa dữ liệu cũ ở tab "Đơn quá hạn", rồi chép các dòng có cột K là "Quá hạn" (cột A đến H). Chạy bằng Alt+F8.</p>
+<pre class="vba">Sub LocDonQuaHan()
+    Dim ws As Worksheet, wd As Worksheet
+    Dim r As Long, n As Long, lr As Long
+    Set ws = Sheets("Data")
+    Set wd = Sheets("Đơn quá hạn")
+    wd.Range("A2:H1000").ClearContents
+    lr = ws.Cells(ws.Rows.Count, "B").End(xlUp).Row
+    n = 2
+    For r = 2 To lr
+        If ws.Cells(r, "K").Value = "Quá hạn" Then
+            wd.Range("A" &amp; n &amp; ":H" &amp; n).Value = ws.Range("A" &amp; r &amp; ":H" &amp; r).Value
+            n = n + 1
+        End If
+    Next r
+    MsgBox "Đã chép " &amp; (n - 2) &amp; " đơn quá hạn."
+End Sub</pre></div>
+<div class="box"><h3>3. Dọn MVD sau khi dán</h3><p class="mute">Xóa khoảng trắng, ký tự lạ, đổi MVD về dạng chữ để tra cứu không ra #N/A, rồi báo số dòng trùng.</p>
+<pre class="vba">Sub DonMVD()
+    Dim ws As Worksheet, r As Long, lr As Long
+    Dim v As String, trung As Long
+    Set ws = Sheets("Data")
+    lr = ws.Cells(ws.Rows.Count, "B").End(xlUp).Row
+    ws.Range("B2:B" &amp; lr).NumberFormat = "@"
+    For r = 2 To lr
+        v = Replace(ws.Cells(r, "B").Value, Chr(160), "")
+        v = Trim(Replace(v, vbLf, ""))
+        ws.Cells(r, "B").Value = v
+        If Application.CountIf(ws.Range("B2:B" &amp; r), v) &gt; 1 Then trung = trung + 1
+    Next r
+    MsgBox "Xong. Số dòng trùng MVD: " &amp; trung
+End Sub</pre></div>
+</div>
+<div class="box warn"><b>Gán nút bấm:</b> Insert, Shapes, vẽ hình chữ nhật, chuột phải, Assign Macro, chọn <code>LocDonQuaHan</code>. Cả đội chỉ việc bấm nút. Macro không có Undo, nên luôn lưu trước khi chạy. Feishu Sheets không chạy VBA, cần dùng Excel hoặc tính năng script riêng của Feishu nếu có.</div>
+
+<h3 style="margin-top:22px">Mức 3. Power Query gộp file hàng ngày</h3>
+<ol class="s">
+<li>Đặt các file ngày vào một thư mục, đặt tên <code>2026-10-05.xlsx</code> để dễ sắp xếp. Cột phải cùng tên, cùng thứ tự.</li>
+<li>Data, Get Data, From File, From Folder, chọn thư mục, bấm <b>Combine &amp; Transform</b>.</li>
+<li>Cột MVD: đổi kiểu thành <b>Text</b> trước, vì đổi sang số sẽ làm mất số 0 đầu hoặc biến thành 8.625E+11.</li>
+<li>Transform, Format, Trim và Clean cho cột MVD. Lọc bỏ dòng null.</li>
+<li>Chọn cột MVD, Home, Remove Rows, Remove Duplicates.</li>
+<li>Add Column, Custom Column <b>Số ngày tồn</b>:<pre class="vba">if [Trạng thái xử lý] = "Đã đối soát" or [Trạng thái xử lý] = "Thất bại"
+then null
+else Duration.Days(Date.From(DateTime.LocalNow()) - Date.From([Ngày nhận]))</pre></li>
+<li>Close &amp; Load. Mỗi sáng thả file mới vào thư mục rồi bấm <b>Data, Refresh All</b>.</li></ol>
+<p class="mute">Lưu ý: Power Query ghi đè bảng kết quả mỗi lần Refresh, nên không gõ tay vào bảng đó. Cập nhật trạng thái ở file gốc hoặc dùng một cột khóa MVD để nối lại.</p>
+
+<h3 style="margin-top:22px">Gửi mail kế toán gần như tự động</h3>
+<p class="mute">Công thức này tạo một liên kết mở sẵn mail với tiêu đề và số liệu. Bấm vào là mở trình mail, bạn chỉ cần dán danh sách MVD (lấy từ TEXTJOIN) rồi gửi. Link dài quá khoảng 2.000 ký tự sẽ bị cắt, nên chỉ đặt số tổng vào đây.</p>
+<pre class="vba">=HYPERLINK("mailto:"&amp;Cài_đặt!B4&amp;"?subject="&amp;ENCODEURL("Danh sách đơn chênh cước cần đối soát - "&amp;TEXT(TODAY(),"dd/mm/yyyy"))&amp;"&amp;body="&amp;ENCODEURL("Tổng đơn quá hạn: "&amp;COUNTIF(Data!K:K,"Quá hạn")&amp;CHAR(10)&amp;"Tổng cước chênh: "&amp;TEXT(SUMIFS(Data!F:F,Data!K:K,"Quá hạn"),"#,##0")&amp;" đ"),"Gửi mail kế toán")</pre>
+<p class="mute">ENCODEURL chỉ có trên Excel Windows. Nếu không có, bỏ ENCODEURL và dùng mail không dấu.</p>
+
+<h3 style="margin-top:22px">Thử tạo nội dung mail từ dữ liệu mẫu</h3>
+<p class="mute">Dùng bảng Database mẫu (hôm nay 05/10/2026). Đây là kết quả mà công thức và macro ở trên sẽ cho bạn.</p>
+<div class="ctl"><label>Hạn xử lý (ngày)<input id="ml" type="number" min="1" max="30" value="3"></label><button class="btn" id="mc">Sao chép nội dung mail</button><span id="mm" class="mute"></span></div>
+<pre id="mo" style="min-height:120px"></pre>
+
+<h3 style="margin-top:22px">Quy trình mỗi ngày sau khi tự động hóa</h3>
+<div class="scroll"><table><tr><th>Bước</th><th>Việc</th><th>Cách</th></tr>
+<tr><td>1</td><td class="w">Dán MVD mới vào cột B</td><td class="w">Macro 1 tự điền ngày nhận và trạng thái</td></tr>
+<tr><td>2</td><td class="w">Chạy dọn MVD</td><td class="w">Macro 3, xem số dòng trùng</td></tr>
+<tr><td>3</td><td class="w">Mở Filter view của mình, xử lý các dòng đỏ trước</td><td class="w">Màu và cột K tự cập nhật</td></tr>
+<tr><td>4</td><td class="w">Cập nhật cột C sau mỗi đơn</td><td class="w">Dropdown, đơn đóng sẽ tự mờ</td></tr>
+<tr><td>5</td><td class="w">Cuối ngày bấm nút lọc quá hạn</td><td class="w">Macro 2</td></tr>
+<tr><td>6</td><td class="w">Bấm link gửi mail kế toán</td><td class="w">Dán danh sách MVD bằng TEXTJOIN rồi gửi</td></tr></table></div>
+<div class="box" style="margin-top:12px"><h3>Kiểm tra sau khi cài</h3><ul class="s"><li>Nhập thử một MVD 11 số và một MVD trùng, xem có bị chặn không.</li><li>Đổi một đơn sang "Đã đối soát", cột J phải trống và dòng chuyển xám.</li><li>Chạy macro trên bản sao, đối chiếu số đơn với bộ lọc K = Quá hạn.</li><li>Đổi hạn ở Cài_đặt!B1, xem số đơn quá hạn có đổi theo.</li></ul></div>
+</section>
+</main>
+
+<script>
+var $=function(i){return document.getElementById(i)};
+var tabs=["Tổng quan","Thư viện hàm","Công thức áp vào file","Database mẫu","Hiệu suất & báo cáo","Lộ trình học","Tự động hóa"],side=$("side");
+function show(i){tabs.forEach(function(_,k){$("t"+k).classList.toggle("on",k===i);side.children[k+2].setAttribute("aria-selected",k===i)});window.scrollTo(0,0)}
+tabs.forEach(function(t,i){var b=document.createElement("button");b.textContent=t;b.onclick=function(){show(i)};side.appendChild(b)});
+show(0);
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
+
+/* [tên, nhóm, cú pháp, logic, ví dụ, lưu ý] */
+var F=[
+["IF","Điều kiện","=IF(điều_kiện, nếu_đúng, nếu_sai)","Kiểm tra điều kiện. TRUE trả đối số 2, FALSE trả đối số 3. Có thể lồng nhau, nhưng quá 3 tầng nên chuyển sang IFS.",'=IF(F2>=3000,"Cao","Thường")',"Chữ phải trong nháy kép. So sánh chữ không phân biệt hoa thường."],
+["IFS","Điều kiện","=IFS(đk1, kq1, đk2, kq2, ..., TRUE, mặc_định)","Duyệt từ trái sang phải, điều kiện nào đúng đầu tiên thì trả kết quả đó và dừng.",'=IFS(F2>=3000,"Cao",F2>=1000,"Trung bình",TRUE,"Thấp")',"Xếp điều kiện từ khắt khe nhất. Thiếu cặp TRUE cuối, không khớp sẽ ra #N/A."],
+["AND / OR","Điều kiện","=AND(đk1, đk2)  |  =OR(đk1, đk2)","AND đúng khi tất cả điều kiện đúng. OR đúng khi có ít nhất một điều kiện đúng.",'=IF(AND(D2="Unsigned",J2>3),"Xử lý gấp","")',"Dùng bên trong IF, không đứng một mình trong báo cáo."],
+["IFERROR","Điều kiện","=IFERROR(giá_trị, nếu_lỗi)","Nếu giá_trị cho ra lỗi (#N/A, #DIV/0!...) thì trả đối số 2, ngược lại trả chính giá_trị.","=IFERROR(C2/B2,0)","Che mọi loại lỗi, kể cả lỗi do viết sai công thức. Chỉ bọc ở bước cuối, sau khi đã kiểm tra công thức chạy đúng."],
+["COUNTIF","Đếm & tổng","=COUNTIF(vùng, điều_kiện)","Đếm số ô trong vùng thỏa một điều kiện.",'=COUNTIF(C:C,"Chưa xử lý")','Điều kiện số: ">3000". Ký tự đại diện: * (nhiều ký tự), ? (một ký tự).'],
+["COUNTIFS","Đếm & tổng","=COUNTIFS(vùng1, đk1, vùng2, đk2, ...)","Đếm số dòng thỏa TẤT CẢ điều kiện cùng lúc (logic AND). Các vùng phải cùng số dòng.",'=COUNTIFS(A:A,"CS An",C:C,"Đã đối soát")',"Muốn logic OR thì cộng hai COUNTIFS. Không dùng được vùng khác kích thước."],
+["SUMIFS","Đếm & tổng","=SUMIFS(vùng_cộng, vùng_đk1, đk1, vùng_đk2, đk2, ...)","Cộng các ô ở vùng_cộng tại những dòng thỏa tất cả điều kiện. Vùng cần cộng đứng đầu.",'=SUMIFS(F:F,A:A,"CS An",K:K,"Quá hạn")',"Cước lưu dạng chữ (căn trái) sẽ bị bỏ qua, phải đổi về số."],
+["AVERAGEIFS","Đếm & tổng","=AVERAGEIFS(vùng_tb, vùng_đk1, đk1, ...)","Trung bình các ô thỏa điều kiện.",'=IFERROR(AVERAGEIFS(F:F,A:A,"CS An"),0)',"Không có dòng nào khớp sẽ ra #DIV/0!, nên bọc IFERROR."],
+["SUBTOTAL","Đếm & tổng","=SUBTOTAL(mã, vùng)","Tính chỉ trên các dòng đang hiển thị sau khi lọc. Mã 109 = tổng, 103 = đếm ô không trống, 101 = trung bình.","=SUBTOTAL(109,F2:F500)","SUM thường vẫn cộng cả dòng bị lọc ẩn. Muốn tổng cước đúng bộ lọc đang chọn thì dùng SUBTOTAL."],
+["VLOOKUP","Tra cứu","=VLOOKUP(giá_trị_tìm, bảng, số_cột, 0)","Tìm giá trị ở CỘT ĐẦU của bảng, rồi trả ô ở cột thứ n tính từ cột đầu. Số 0 nghĩa là khớp chính xác.","=VLOOKUP(B2,'Đơn quá hạn'!B:F,5,0)","Chỉ tìm sang phải. Luôn ghi số 0 cuối. Lệch kiểu chữ/số của MVD thì ra #N/A."],
+["XLOOKUP","Tra cứu","=XLOOKUP(giá_trị_tìm, vùng_tìm, vùng_trả, nếu_không_thấy)","Tìm trong một cột, trả giá trị cùng vị trí ở cột khác. Tìm được cả sang trái, mặc định khớp chính xác.","=XLOOKUP(B2,'Đơn quá hạn'!B:B,'Đơn quá hạn'!C:C,\"Không có\")","Bản Excel/Feishu cũ có thể không hỗ trợ, khi đó dùng INDEX+MATCH."],
+["INDEX + MATCH","Tra cứu","=INDEX(vùng_trả, MATCH(giá_trị, vùng_tìm, 0))","MATCH trả số thứ tự dòng của giá trị trong vùng_tìm (0 = khớp chính xác). INDEX lấy ô ở thứ tự đó trong vùng_trả.","=INDEX('Đơn quá hạn'!C:C,MATCH(B2,'Đơn quá hạn'!B:B,0))","Hai vùng nên bắt đầu và kết thúc cùng hàng. Dùng được khi tìm sang trái."],
+["TRIM","Văn bản","=TRIM(văn_bản)","Xóa khoảng trắng đầu, cuối và khoảng trắng thừa ở giữa.","=TRIM(B2)","Không xóa khoảng trắng cứng khi copy từ web: dùng =SUBSTITUTE(B2,CHAR(160),\"\")."],
+["TEXT","Văn bản","=TEXT(giá_trị, \"định_dạng\")","Đổi số hoặc ngày thành chữ theo định dạng chỉ định.",'=TEXT(I2,"dd/mm/yyyy")  |  =TEXT(F2,"#,##0")',"Kết quả là chữ nên không cộng trừ tiếp được. Mã định dạng có thể đổi theo ngôn ngữ máy."],
+["LEFT / MID","Văn bản","=LEFT(văn_bản, n)  |  =MID(văn_bản, vị_trí_đầu, n)","LEFT lấy n ký tự từ bên trái. MID lấy n ký tự bắt đầu từ vị trí chỉ định (vị trí đầu tiên là 1).","=LEFT(B2,3)","Kết quả là chữ, dùng VALUE() nếu cần chuyển lại thành số."],
+["TEXTJOIN","Văn bản","=TEXTJOIN(ký_tự_nối, bỏ_ô_trống, vùng)","Nối nhiều ô thành một chuỗi, ngăn cách bằng ký tự bạn chọn. TRUE nghĩa là bỏ qua ô trống.",'=TEXTJOIN(",",TRUE,B2:B20)',"Dùng để gộp danh sách MVD dán vào mail. Một ô tối đa khoảng 32.000 ký tự."],
+["TODAY","Ngày tháng","=TODAY()","Trả ngày hôm nay và tự đổi mỗi ngày. Hai ngày trừ nhau ra số ngày.","=TODAY()-I2","Ô kết quả phải định dạng Number, nếu để Date sẽ hiện thành ngày lạ. Đơn đã đóng nên dừng đếm."],
+["NETWORKDAYS","Ngày tháng","=NETWORKDAYS(ngày_đầu, ngày_cuối)","Đếm số ngày làm việc (trừ thứ 7, chủ nhật) gồm cả ngày đầu và ngày cuối.","=NETWORKDAYS(I2,TODAY())-1","Tính cả hai đầu nên trừ 1 để ra số ngày đã trôi qua. Cần tùy chỉnh ngày nghỉ thì dùng NETWORKDAYS.INTL."],
+["ABS / ROUND","Khác","=ABS(số)  |  =ROUND(số, số_chữ_số)","ABS bỏ dấu âm. ROUND làm tròn đến số chữ số thập phân chỉ định, số âm làm tròn về hàng chục, trăm, nghìn.","=ROUND(F2,-3)","ROUND(F2,-3) làm tròn về hàng nghìn. Làm tròn ở bước cuối, đừng làm giữa các phép tính."],
+["UNIQUE / FILTER","Khác","=UNIQUE(vùng)  |  =FILTER(vùng, điều_kiện, nếu_trống)","UNIQUE trả danh sách không trùng. FILTER trả các dòng thỏa điều kiện, kết quả tự tràn ra nhiều ô.",'=FILTER(A2:F500,K2:K500="Quá hạn","Không có")',"Cần bản Excel 365. Với Feishu, chạy thử trước, nếu không có thì dùng Filter view."]
+];
+var cat="Tất cả",cats=["Tất cả","Điều kiện","Đếm & tổng","Tra cứu","Văn bản","Ngày tháng","Khác"];
+cats.forEach(function(c){var b=el("button","chip",c);b.setAttribute("aria-pressed",c===cat);b.onclick=function(){cat=c;[].forEach.call($("cats").children,function(x){x.setAttribute("aria-pressed",x.textContent===c)});draw()};$("cats").appendChild(b)});
+function card(h,tag,rows){var b=el("div","box"),t=el("h3");t.appendChild(el("span","",h));if(tag)t.appendChild(el("small","",tag));b.appendChild(t);var d=el("dl");rows.forEach(function(r){if(!r[1])return;d.appendChild(el("dt","",r[0]));var dd=el("dd");if(r[2]){var p=el("pre","",r[1]);dd.appendChild(p)}else dd.textContent=r[1];d.appendChild(dd)});b.appendChild(d);return b}
+function draw(){var q=$("q").value.toLowerCase(),o=$("fn");o.innerHTML="";var n=0;F.forEach(function(f){if(cat!=="Tất cả"&&f[1]!==cat)return;if(q&&(f.join(" ").toLowerCase().indexOf(q)<0))return;n++;o.appendChild(card(f[0],f[1],[["Cú pháp",f[2],1],["Logic chạy",f[3]],["Ví dụ trong file",f[4],1],["Lưu ý",f[5]]]))});if(!n)o.appendChild(el("p","mute","Không có hàm khớp. Thử từ khóa khác hoặc chọn Tất cả."))}
+$("q").oninput=draw;draw();
+
+var M=[
+["Số ngày tồn (cột J)","Đơn đã đóng thì để trống, đơn còn mở thì lấy hôm nay trừ ngày nhận.",'=IF(OR(C2="Đã đối soát",C2="Thất bại"),"",TODAY()-I2)'],
+["Quá hạn (cột K), hạn 3 ngày","Ô J trống thì bỏ qua, lớn hơn 3 ngày thì báo quá hạn.",'=IF(J2="","",IF(J2>3,"Quá hạn","Trong hạn"))'],
+["Nhóm cước (cột L)","Từ 3.000 trở lên là Cao, từ 1.000 là Trung bình, còn lại là Thấp.",'=IFS(F2>=3000,"Cao",F2>=1000,"Trung bình",TRUE,"Thấp")'],
+["Trùng MVD (cột M)","Vùng giãn dần: đếm MVD này đã xuất hiện bao nhiêu lần từ hàng 2 đến hàng hiện tại, từ lần thứ 2 là trùng.",'=IF(COUNTIF($B$2:B2,B2)>1,"Trùng","")'],
+["Làm sạch MVD","Xóa khoảng trắng dư sau khi dán từ hệ thống.","=TRIM(B2)"],
+["Đối chiếu với tab khác","Tìm MVD ở tab Đơn quá hạn, không thấy thì ghi Không có.","=IFERROR(VLOOKUP(B2,'Đơn quá hạn'!B:C,2,0),\"Không có\")"],
+["Tổng đơn của CS","Tên CS đặt ở ô A2 của tab Hiệu suất.","=COUNTIFS(Data!A:A,A2)"],
+["Đơn đã xong của CS","Đã đối soát cộng Thất bại (hai trạng thái đóng đơn).",'=COUNTIFS(Data!A:A,A2,Data!C:C,"Đã đối soát")+COUNTIFS(Data!A:A,A2,Data!C:C,"Thất bại")'],
+["Tỷ lệ xong","Đơn xong chia tổng đơn, ô C là đã xong, ô B là tổng đơn. Định dạng ô là %.","=IFERROR(C2/B2,0)"],
+["Cước chênh tồn của CS","Chỉ cộng đơn chưa đóng.",'=SUMIFS(Data!F:F,Data!A:A,A2,Data!C:C,"<>Đã đối soát",Data!C:C,"<>Thất bại")'],
+["Tổng cước theo bộ lọc","Chỉ cộng các dòng đang hiện sau khi lọc.","=SUBTOTAL(109,Data!F2:F500)"],
+["Gộp MVD quá hạn gửi mail","Công thức mảng: ngoài Excel 365 phải nhấn Ctrl+Shift+Enter.",'=TEXTJOIN(", ",TRUE,IF(Data!K2:K500="Quá hạn",Data!B2:B500,""))']
+];
+M.forEach(function(m){$("fm").appendChild(card(m[0],"",[["Logic",m[1]],["Công thức",m[2],1]]))});
+
+var R=[["CS An","862500000101","TikTok","2026-09-28","Chưa xử lý","Unsigned","đo",425],["CS An","862500000102","TikTok","2026-10-01","Đang xử lý","Unsigned","đo",2208],["CS An","862500000103","Khách lẻ","2026-10-02","Đã đối soát","Signed","cân",417],["CS An","862500000104","TikTok","2026-10-03","Chưa xử lý","Unsigned","đo",2803],["CS An","862500000115","Khách lẻ","2026-10-05","Chưa xử lý","Unsigned","cân",980],["CS Bình","862500000105","TikTok","2026-09-27","Đang xử lý","Unsigned","đo",1833],["CS Bình","862500000106","Khách lẻ","2026-09-30","Thất bại","Signed","đo",1833],["CS Bình","862500000107","TikTok","2026-10-01","Đã đối soát","Signed","đo",3636],["CS Bình","862500000108","TikTok","2026-10-04","Chưa xử lý","Unsigned","đo",3636],["CS Bình","862500000109","Khách lẻ","2026-10-02","Đang xử lý","Unsigned","cân",425],["CS Chi","862500000110","TikTok","2026-09-29","Chưa xử lý","Unsigned","đo",3636],["CS Chi","862500000111","TikTok","2026-10-02","Đã đối soát","Signed","đo",3636],["CS Chi","862500000112","Khách lẻ","2026-10-03","Đang xử lý","Unsigned","đo",3636],["CS Chi","862500000113","TikTok","2026-10-04","Đã đối soát","Signed","đo",3636],["CS Chi","862500000114","TikTok","2026-09-26","Đang xử lý","Unsigned","đo",5400]];
+var TD=new Date("2026-10-05T00:00:00");
+function f(n){return n.toLocaleString("vi-VN")}
+function calc(){
+ var s=$("fs").value,t=$("ft").value,lim=+$("lim").value||3,agg={},sh=[],tot=0,ov=0,open=0;
+ R.forEach(function(r){
+  if((s&&r[2]!==s)||(t&&r[4]!==t))return;
+  var cl=r[4]==="Đã đối soát"||r[4]==="Thất bại",d=cl?null:Math.round((TD-new Date(r[3]+"T00:00:00"))/864e5),o=d!==null&&d>lim;
+  sh.push(r.concat([d===null?"":d,d===null?"":(o?"Quá hạn":"Trong hạn"),r[7]>=3000?"Cao":r[7]>=1000?"Trung bình":"Thấp"]));
+  var a=agg[r[0]]||(agg[r[0]]={n:0,x:0,o:0,m:0});a.n++;if(cl)a.x++;else a.m+=r[7];if(o)a.o++;
+  tot++;if(o)ov++;if(!cl)open+=r[7];
+ });
+ var H=["CS","MVD","Nguồn","Ngày nhận","Trạng thái xử lý","Dấu ký nhận","Cân hay Đo?","Cước chênh","Số ngày tồn","Quá hạn","Nhóm cước"],out="<tr>"+H.map(function(h,i){return"<th"+(i===7||i===8?' class="n"':"")+">"+h+"</th>"}).join("")+"</tr>";
+ sh.forEach(function(r){out+="<tr><td>"+r[0]+"</td><td>"+r[1]+"</td><td>"+r[2]+"</td><td>"+r[3]+"</td><td>"+r[4]+"</td><td>"+r[5]+"</td><td>"+r[6]+'</td><td class="n">'+f(r[7])+'</td><td class="n">'+r[8]+"</td><td>"+(r[9]?'<span class="tg '+(r[9]==="Quá hạn"?"r":"g")+'">'+r[9]+"</span>":"")+'</td><td><span class="tg '+(r[10]==="Cao"?"y":"")+'">'+r[10]+"</span></td></tr>"});
+ if(!sh.length)out+="<tr><td colspan=11>Không có đơn khớp bộ lọc. Chọn lại Nguồn hoặc Trạng thái.</td></tr>";
+ $("db").innerHTML=out;
+ var p="<tr><th>CS</th><th class='n'>Tổng đơn</th><th class='n'>Đã xong</th><th class='n'>Tỷ lệ xong</th><th class='n'>Quá hạn</th><th class='n'>Cước chênh tồn (VND)</th></tr>";
+ Object.keys(agg).forEach(function(k){var a=agg[k];p+="<tr><td>"+k+"</td><td class='n'>"+a.n+"</td><td class='n'>"+a.x+"</td><td class='n'>"+Math.round(a.x/a.n*100)+"%</td><td class='n'>"+a.o+"</td><td class='n'>"+f(a.m)+"</td></tr>"});
+ $("pv").innerHTML=p;$("kp").innerHTML="";
+ [["Đơn đang lọc",tot],["Đơn quá hạn",ov],["Cước chênh tồn",f(open)+" đ"]].forEach(function(k){var b=el("div","box");b.appendChild(el("div","mute",k[0]));var v=el("div","",k[1]);v.style.cssText="font-size:28px;font-weight:800";b.appendChild(v);$("kp").appendChild(b)});
+ window._sh=sh;
+}
+["fs","ft","lim"].forEach(function(i){$(i).oninput=calc});calc();
+$("cp").onclick=function(){var m=$("cpm"),msg="Không sao chép được, hãy bôi đen bảng rồi copy tay.";try{navigator.clipboard.writeText(window._sh.map(function(r){return r.slice(0,8).join("\t")}).join("\n")).then(function(){m.textContent="Đã sao chép. Dán vào ô A2 của sheet."},function(){m.textContent=msg})}catch(e){m.textContent=msg}};
+
+var L=["Lọc, sắp xếp, Remove Duplicates, Text to Columns","Conditional Formatting và Data Validation (dropdown)","IF, IFS, AND, OR, IFERROR","COUNTIF, COUNTIFS, SUMIFS, AVERAGEIFS","VLOOKUP, XLOOKUP, INDEX+MATCH","TRIM, TEXT, LEFT, MID, TEXTJOIN","TODAY, NETWORKDAYS, tính số ngày tồn","Pivot table theo CS, nguồn đơn, tuần","Dựng bảng hiệu suất 1 trang","Power Query gộp file hàng ngày","Ghi Macro cho thao tác lặp lại","Tự động hóa một báo cáo đang làm tay và gửi quản lý"],st={};
+try{st=JSON.parse(localStorage.getItem("ck")||"{}")}catch(e){}
+function upd(){var n=L.filter(function(_,i){return st[i]}).length;$("pg").value=n/L.length;$("pgt").textContent="Hoàn thành "+n+"/"+L.length+" mục"}
+L.forEach(function(t,i){var d=el("label","chk"),c=el("input");c.type="checkbox";c.checked=!!st[i];c.onchange=function(){st[i]=c.checked;try{localStorage.setItem("ck",JSON.stringify(st))}catch(e){}upd()};d.appendChild(c);d.appendChild(document.createTextNode(t));$("ck").appendChild(d)});
+upd();
+
+/* Tự động hóa: nút copy code và mẫu mail */
+[].forEach.call(document.querySelectorAll("#t6 pre.vba,#t4 pre.vba"),function(p){var b=el("button","chip","Sao chép");b.style.margin="4px 0";b.onclick=function(){try{navigator.clipboard.writeText(p.textContent).then(function(){b.textContent="Đã chép"},function(){b.textContent="Hãy bôi đen và copy tay"})}catch(e){b.textContent="Hãy bôi đen và copy tay"}};p.parentNode.insertBefore(b,p)});
+function mail(){var lim=+$("ml").value||3,L=[],tot=0;
+ R.forEach(function(r){if(r[4]==="Đã đối soát"||r[4]==="Thất bại")return;var d=Math.round((TD-new Date(r[3]+"T00:00:00"))/864e5);if(d>lim){L.push(r[1]+" ("+r[0]+", tồn "+d+" ngày, "+f(r[7])+" đ)");tot+=r[7]}});
+ $("mo").textContent="Tiêu đề: Danh sách đơn chênh cước cần đối soát - 05/10/2026\n\nChào anh/chị,\nHôm nay có "+L.length+" đơn quá hạn "+lim+" ngày, tổng cước chênh "+f(tot)+" đ.\n\nDanh sách MVD:\n"+(L.length?L.map(function(x,i){return (i+1)+". "+x}).join("\n"):"Không có đơn quá hạn.")+"\n\nNhờ anh/chị kiểm tra và đối soát giúp.\nCảm ơn.";}
+$("ml").oninput=mail;mail();
+$("mc").onclick=function(){var m=$("mm");try{navigator.clipboard.writeText($("mo").textContent).then(function(){m.textContent="Đã sao chép."},function(){m.textContent="Hãy bôi đen và copy tay."})}catch(e){m.textContent="Hãy bôi đen và copy tay."}};
+
+/* Hiệu suất và báo cáo */
+function rep(){
+ var lim=+$("rl").value||3,tg=(+$("rt").value||60)/100,cs={},sr={},ag=[0,0,0],tot=0,done=0,ov=0,open=0,openN=0,uns=0,old=null;
+ R.forEach(function(r){var cl=r[4]==="Đã đối soát"||r[4]==="Thất bại",d=Math.round((TD-new Date(r[3]+"T00:00:00"))/864e5),
+  a=cs[r[0]]||(cs[r[0]]={n:0,x:0,f:0,o:0,m:0,s:0,c:0}),b=sr[r[2]]||(sr[r[2]]={n:0,c:0,o:0,m:0});
+  a.n++;b.n++;tot++;
+  if(cl){a.x++;done++;if(r[4]==="Thất bại")a.f++}
+  else{a.m+=r[7];a.s+=d;a.c++;b.m+=r[7];b.c++;open+=r[7];openN++;ag[d<=3?0:d<=7?1:2]++;if(r[5]==="Unsigned")uns++;
+   if(d>lim){a.o++;b.o++;ov++}if(!old||d>old.d)old={d:d,m:r[1],c:r[0]}}});
+ var pct=function(x,y){return y?Math.round(x/y*100):0},rate=pct(done,tot);
+ $("rk").innerHTML="";
+ [["Tỷ lệ xong",rate+"%","Mục tiêu "+Math.round(tg*100)+"%: "+(rate/100>=tg?"đạt":"chưa đạt")],["Đơn quá hạn",ov,"trên "+openN+" đơn chưa đóng"],["Cước chênh tồn",f(open)+" đ","từ "+openN+" đơn chưa đóng"]].forEach(function(k){var b=el("div","box");b.appendChild(el("div","mute",k[0]));var v=el("div","",k[1]);v.style.cssText="font-size:28px;font-weight:800";b.appendChild(v);b.appendChild(el("div","mute",k[2]));$("rk").appendChild(b)});
+ var t="<tr><th>CS</th><th class='n'>Tổng</th><th class='n'>Đã xong</th><th class='n'>Tỷ lệ xong</th><th class='n'>Thất bại</th><th class='n'>Quá hạn</th><th class='n'>Cước tồn (đ)</th><th class='n'>Tuổi tồn TB</th><th>Đạt</th></tr>",bars="";
+ Object.keys(cs).forEach(function(k){var a=cs[k],p=pct(a.x,a.n),ok=p/100>=tg;
+  t+="<tr><td>"+k+"</td><td class='n'>"+a.n+"</td><td class='n'>"+a.x+"</td><td class='n'>"+p+"%</td><td class='n'>"+a.f+"</td><td class='n'>"+a.o+"</td><td class='n'>"+f(a.m)+"</td><td class='n'>"+(a.c?(a.s/a.c).toFixed(1):"0")+"</td><td><span class='tg "+(ok?"g":"r")+"'>"+(ok?"Đạt":"Chưa đạt")+"</span></td></tr>";
+  bars+="<div style='display:flex;align-items:center;gap:10px;margin:6px 0'><span style='width:70px'>"+k+"</span><div style='flex:1;background:var(--code);border-radius:6px;height:16px;position:relative'><div style='width:"+p+"%;height:100%;border-radius:6px;background:"+(ok?"var(--ok)":"var(--red)")+"'></div><div style='position:absolute;left:"+Math.round(tg*100)+"%;top:-3px;bottom:-3px;border-left:2px dashed var(--ink)'></div></div><b style='width:44px;text-align:right'>"+p+"%</b></div>"});
+ t+="<tr><th>Toàn nhóm</th><th class='n'>"+tot+"</th><th class='n'>"+done+"</th><th class='n'>"+rate+"%</th><th class='n'>"+Object.keys(cs).reduce(function(s,k){return s+cs[k].f},0)+"</th><th class='n'>"+ov+"</th><th class='n'>"+f(open)+"</th><th></th><th></th></tr>";
+ $("rcs").innerHTML=t;$("rbar").innerHTML="<div class='mute' style='font-size:13px'>Tỷ lệ xong theo CS (vạch đứt là mục tiêu)</div>"+bars;
+ var s="<tr><th>Nguồn</th><th class='n'>Tổng</th><th class='n'>Chưa đóng</th><th class='n'>Quá hạn</th><th class='n'>Cước tồn (đ)</th></tr>";
+ Object.keys(sr).forEach(function(k){var b=sr[k];s+="<tr><td>"+k+"</td><td class='n'>"+b.n+"</td><td class='n'>"+b.c+"</td><td class='n'>"+b.o+"</td><td class='n'>"+f(b.m)+"</td></tr>"});$("rsr").innerHTML=s;
+ $("rag").innerHTML="<tr><th>Nhóm tuổi tồn</th><th class='n'>Số đơn</th><th class='n'>Tỷ trọng</th></tr>"+["0 đến 3 ngày","4 đến 7 ngày","Trên 7 ngày"].map(function(n,i){return "<tr><td>"+n+"</td><td class='n'>"+ag[i]+"</td><td class='n'>"+pct(ag[i],openN)+"%</td></tr>"}).join("");
+ var ks=Object.keys(cs),worst=ks.slice().sort(function(a,b){return cs[b].o-cs[a].o})[0],best=ks.slice().sort(function(a,b){return cs[b].x/cs[b].n-cs[a].x/cs[a].n})[0],
+  sk=Object.keys(sr),ms=sk.slice().sort(function(a,b){return sr[b].m-sr[a].m})[0],L=[],A=[];
+ L.push(best+" có tỷ lệ xong cao nhất ("+pct(cs[best].x,cs[best].n)+"%).");
+ if(ov)L.push(worst+" có "+cs[worst].o+" đơn quá hạn, chiếm "+pct(cs[worst].o,ov)+"% đơn quá hạn của nhóm.");
+ L.push("Nguồn "+ms+" chiếm "+pct(sr[ms].m,open)+"% cước chênh tồn ("+f(sr[ms].m)+" đ).");
+ L.push(uns+"/"+openN+" đơn chưa đóng là đơn chưa ký ("+pct(uns,openN)+"%), cần theo dõi ký nhận trước khi đối soát.");
+ if(ag[2])L.push("Có "+ag[2]+" đơn tồn trên 7 ngày, lâu nhất là "+old.m+" ("+old.c+", "+old.d+" ngày).");
+ if(ov)A.push("Ưu tiên xử lý "+cs[worst].o+" đơn quá hạn của "+worst+", hoàn thành trong 2 ngày làm việc.");
+ if(old&&old.d>lim)A.push("Xử lý riêng đơn "+old.m+" (tồn "+old.d+" ngày) và báo lý do nếu chưa thể đóng.");
+ A.push("Rà các đơn chưa ký của nguồn "+ms+" để chốt hướng đối soát.");
+ A.push("Cập nhật báo cáo này vào cuối mỗi ngày và so với kỳ trước.");
+ $("rin").innerHTML="<h3>Nhận xét</h3><ul class='s'>"+L.map(function(x){return "<li>"+x+"</li>"}).join("")+"</ul><h3>Hành động đề xuất</h3><ol class='s'>"+A.map(function(x){return "<li>"+x+"</li>"}).join("")+"</ol><p class='mute'>Đây là câu tự sinh từ dữ liệu mẫu. Hãy đọc lại và chỉnh theo tình hình thực tế trước khi gửi.</p>";
+ window._rs="BÁO CÁO CHECK TRỌNG LƯỢNG - 05/10/2026\n\n1. Tóm tắt\n- Tỷ lệ xong: "+rate+"% (mục tiêu "+Math.round(tg*100)+"%)\n- Đơn quá hạn: "+ov+"\n- Cước chênh tồn: "+f(open)+" đ\n\n2. Nhận xét\n"+L.map(function(x){return "- "+x}).join("\n")+"\n\n3. Hành động\n"+A.map(function(x,i){return (i+1)+". "+x}).join("\n");
+}
+$("rl").oninput=rep;$("rt").oninput=rep;rep();
+$("rc").onclick=function(){var m=$("rm");try{navigator.clipboard.writeText(window._rs).then(function(){m.textContent="Đã sao chép."},function(){m.textContent="Hãy copy tay."})}catch(e){m.textContent="Hãy copy tay."}};
+</script>
+</body>
+</html>
